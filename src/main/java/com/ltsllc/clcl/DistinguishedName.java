@@ -1,5 +1,9 @@
 package com.ltsllc.clcl;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * An LDAP Distinguished Name.
  *
@@ -75,6 +79,65 @@ public class DistinguishedName {
         this.name = dn.getName();
     }
 
+    public DistinguishedName (Principal principal) {
+        initialize(principal);
+    }
+
+    public void initialize (Principal principal) {
+        String fields[] = principal.toString().split(",");
+        List<LDAPName> names = toLDAPNames(fields);
+
+        setCountryCode(findCountryCode(names));
+        setState(findState(names));
+        setCity(findCity(names));
+        setCompany(findCompany(names));
+        setDivision(findDivision(names));
+        setName(findName(names));
+    }
+
+    public static List<LDAPName> toLDAPNames (String[] names) {
+        List<LDAPName> ldapNames = new ArrayList<LDAPName>();
+        for (String name : names) {
+            LDAPName aLdapName = new LDAPName(name);
+            ldapNames.add(aLdapName);
+        }
+
+        return ldapNames;
+    }
+
+    public String findCountryCode(List<LDAPName> names) {
+        return find ("c", names);
+    }
+
+    public String findState (List<LDAPName> names) {
+        return find ("st", names);
+    }
+
+    public String findCity (List<LDAPName> names) {
+        return find ("l", names);
+    }
+
+    public String findCompany (List<LDAPName> names) {
+        return find ("o", names);
+    }
+
+    public String findDivision (List<LDAPName> names) {
+        return find ("ou", names);
+    }
+
+    public String findName (List<LDAPName> names) {
+        return find ("cn", names);
+    }
+
+    public String find (String key, List<LDAPName> names) {
+        for (LDAPName ldapName : names) {
+            if (ldapName.getKey().equalsIgnoreCase(key))
+                return ldapName.getValue();
+        }
+
+        return null;
+    }
+
     public String getName() {
         return name;
     }
@@ -84,7 +147,6 @@ public class DistinguishedName {
     }
 
     public String getDivision() {
-
         return division;
     }
 
@@ -138,17 +200,43 @@ public class DistinguishedName {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("c=");
         stringBuilder.append(getCountryCode());
-        stringBuilder.append("st=");
+        stringBuilder.append(",st=");
         stringBuilder.append(getState());
-        stringBuilder.append("l=");
+        stringBuilder.append(",l=");
         stringBuilder.append(getCity());
-        stringBuilder.append("o=");
+        stringBuilder.append(",o=");
         stringBuilder.append(getCompany());
-        stringBuilder.append("ou=");
+        stringBuilder.append(",ou=");
         stringBuilder.append(getDivision());
-        stringBuilder.append("cn=");
+        stringBuilder.append(",cn=");
         stringBuilder.append(getName());
 
         return stringBuilder.toString();
+    }
+
+    public boolean equals (Object o) {
+        if (null == o || !(o instanceof DistinguishedName))
+            return false;
+
+        DistinguishedName other = (DistinguishedName) o;
+        if (!getCountryCode().equals(other.getCountryCode()))
+            return false;
+
+        if (!getState().equals(other.getState()))
+            return false;
+
+        if (!getCity().equals(other.getCity()))
+            return false;
+
+        if (!getCompany().equals(other.getCompany()))
+            return false;
+
+        if (!getDivision().equals(other.getDivision()))
+            return false;
+
+        if (!getName().equals(other.getName()))
+            return false;
+
+        return true;
     }
 }

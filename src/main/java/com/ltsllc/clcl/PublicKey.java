@@ -16,12 +16,10 @@
 
 package com.ltsllc.clcl;
 
-import com.ltsllc.common.util.Utils;
 import org.bouncycastle.openssl.PEMWriter;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.KeyGenerator;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -99,5 +97,20 @@ public class PublicKey extends Key {
 
     public CertificateSigningRequest createCertificateSigningRequest (PrivateKey privateKey) {
         return new CertificateSigningRequest (this, privateKey);
+    }
+
+    @Override
+    public String toPem(String password) throws EncryptionException {
+        return null;
+    }
+
+
+    public void fromPEM(String pem) throws EncryptionException {
+
+    }
+
+
+    public void fromPEM(String pem, String passwordString) throws EncryptionException {
+
     }
 }

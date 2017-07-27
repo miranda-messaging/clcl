@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.util.*;
+import java.security.cert.X509Certificate;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Java key store.
@@ -160,14 +163,16 @@ public class JavaKeyStore {
         Certificate[] newChain = new Certificate[oldChain.length];
 
         for (int index = 0; index < oldChain.length; index++) {
-            newChain[index] = new Certificate(oldChain[index]);
+            X509Certificate x509Certificate = (X509Certificate) oldChain[index];
+            newChain[index] = new Certificate(x509Certificate);
         }
 
         return newChain;
     }
 
     public void processCertificateEntry (String alias, KeyStore.TrustedCertificateEntry trustedCertificateEntry) {
-        Certificate certificate = new Certificate(trustedCertificateEntry.getTrustedCertificate());
+        X509Certificate x509Certificate = (X509Certificate) trustedCertificateEntry.getTrustedCertificate();
+        Certificate certificate = new Certificate(x509Certificate);
         getCertificates().put(alias, certificate);
     }
 }

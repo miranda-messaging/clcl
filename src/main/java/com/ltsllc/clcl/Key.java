@@ -17,16 +17,16 @@
 package com.ltsllc.clcl;
 
 import com.ltsllc.common.util.Utils;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.*;
-import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.security.spec.KeySpec;
+import java.security.Provider;
+import java.security.Security;
 
 /**
  * A class that can be used to encrypt or decrypt messages.
@@ -40,6 +40,7 @@ abstract public class Key implements Serializable {
     abstract public byte[] encrypt (byte[] plainText) throws EncryptionException;
     abstract public byte[] decrypt (byte[] cipherText) throws EncryptionException;
     abstract public String toPem () throws EncryptionException;
+    abstract public String toPem (String password) throws EncryptionException;
 
     public static String SESSION_ALGORITHM = "AES";
 
@@ -54,7 +55,7 @@ abstract public class Key implements Serializable {
     }
 
     /**
-     * Encrpyt a message.
+     * Encrypt a message.
      *
      * <p>
      *     This is a utility method for encrypting messages.
@@ -94,6 +95,44 @@ abstract public class Key implements Serializable {
     }
 
     /**
+     * A convenience method for encrypting Strings.
+     *
+     * <p>
+     *     This method calls {@link #encrypt(byte[])} under the covers.
+     * </p>
+     *
+     * @param plainTextString The string to be encrypted.
+     * @return A hexadecimal string (suitable for use with {@link Utils#hexStringToBytes(String)}) that is the
+     * input encrypted.
+     * @throws EncryptionException If there is a problem encrypting.
+     */
+    public String encryptString (String plainTextString) throws EncryptionException {
+        byte[] plainText = plainTextString.getBytes();
+        byte[] cipherText = encrypt(plainText);
+        return Utils.bytesToString(cipherText);
+    }
+
+    /**
+     * A convenience method for decrypting strings.
+     *
+     * <p>
+     *     This method assumes that the input is a hexadecimal string that represents the encrypted string.
+     *     This method calls {@link Utils#hexStringToBytes(String)} to convert the input to bytes before decrypting it.
+     * </p>
+     *
+     * @param hexString A hexadecimal string that represents the encrypted string.
+     * @return The decrypted string.
+     * @throws IOException If there is a problem converting the input string to bytes.
+     * @throws EncryptionException If there is a problem decrypting the string.
+     * @return The decrypted string.
+     */
+    public String decryptString (String hexString) throws IOException, EncryptionException {
+        byte[] cipherText = Utils.hexStringToBytes(hexString);
+        byte[] plainText = decrypt(cipherText);
+        return new String(plainText);
+    }
+
+    /**
      * Decrypt a message.
      *
      * <p>
@@ -109,6 +148,8 @@ abstract public class Key implements Serializable {
         throws EncryptionException
     {
         try {
+            checkProviders();
+
             byte[] sessionKeyPlainText = decrypt(Utils.hexStringToBytes(encryptedMessage.getKey()));
             SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(encryptedMessage.getAlgorithm());
 
@@ -127,5 +168,28 @@ abstract public class Key implements Serializable {
         } catch (GeneralSecurityException|IOException e) {
             throw new EncryptionException("Exception trying to decrypt message", e);
         }
+    }
+
+    /**
+     * Make sure the {@link BouncyCastleProvider} is available.
+     *
+     * <p>
+     *     This method uses {@link Security#getProviders()} to determine if the BouncyCastleProvider is present.
+     *     If is missing then the method adds it with {@link Security#addProvider(Provider)}.
+     * </p>
+     */
+    public void checkProviders () {
+        Provider[] providers = Security.getProviders();
+
+        boolean hasBouncyCastle = false;
+
+        for (Provider provider : providers) {
+            if (provider instanceof BouncyCastleProvider) {
+                hasBouncyCastle = true;
+            }
+        }
+
+        if (!hasBouncyCastle)
+            Security.addProvider(new BouncyCastleProvider());
     }
 }

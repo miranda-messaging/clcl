@@ -1,9 +1,6 @@
 package com.ltsllc.clcl;
 
 import org.bouncycastle.openssl.PEMWriter;
-import org.bouncycastle.openssl.PKCS8Generator;
-import org.bouncycastle.openssl.jcajce.JcaPKCS8Generator;
-import sun.security.pkcs10.PKCS10;
 
 import java.io.IOException;
 import java.io.StringWriter;
