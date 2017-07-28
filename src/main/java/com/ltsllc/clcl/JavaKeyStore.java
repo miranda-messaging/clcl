@@ -95,7 +95,7 @@ public class JavaKeyStore {
     {
         for (String alias : certificates.keySet()) {
             Certificate certificate = certificates.get(alias);
-            keyStore.setCertificateEntry(alias, certificate.toJscCertificate());
+            keyStore.setCertificateEntry(alias, certificate.getCertificate());
         }
     }
 

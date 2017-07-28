@@ -2,10 +2,14 @@ package com.ltsllc.clcl;
 
 import com.sun.deploy.uitoolkit.impl.fx.ui.CertificateDialog;
 import jdk.internal.util.xml.impl.Input;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.jcajce.provider.keystore.PKCS12;
+import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PEMWriter;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -22,10 +26,6 @@ public class Certificate {
         this.certificate = certificate;
     }
 
-    public java.security.cert.Certificate toJscCertificate () {
-        return getCertificate();
-    }
-
     public String toPem () throws IOException {
         StringWriter stringWriter = new StringWriter();
         PEMWriter pemWriter = new PEMWriter(stringWriter);
@@ -34,13 +34,14 @@ public class Certificate {
         return stringWriter.toString();
     }
 
-    public String toPem (String passwordString) {
-        return null;
-    }
+    public static Certificate fromPEM (String pem) throws IOException, GeneralSecurityException {
+        StringReader stringReader = new StringReader(pem);
+        PEMParser pemParser = new PEMParser(stringReader);
+        X509CertificateHolder x509CertificateHolder = (X509CertificateHolder) pemParser.readObject();
+        org.bouncycastle.asn1.x509.Certificate certificate = x509CertificateHolder.toASN1Structure();
 
-    public static Certificate fromPEM (String pem) throws CertificateException {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(certificate.getEncoded());
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(pem.getBytes());
         X509Certificate x509Certificate = (X509Certificate) certificateFactory.generateCertificate(byteArrayInputStream);
 
         return new Certificate(x509Certificate);
