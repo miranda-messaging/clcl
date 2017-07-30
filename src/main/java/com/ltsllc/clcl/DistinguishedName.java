@@ -80,11 +80,15 @@ public class DistinguishedName {
     }
 
     public DistinguishedName (Principal principal) {
-        initialize(principal);
+        initialize(principal.toString());
     }
 
-    public void initialize (Principal principal) {
-        String fields[] = principal.toString().split(",");
+    public DistinguishedName (String dn) {
+        initialize(dn);
+    }
+
+    public void initialize (String dn) {
+        String fields[] = dn.split(",");
         List<LDAPName> names = toLDAPNames(fields);
 
         setCountryCode(findCountryCode(names));

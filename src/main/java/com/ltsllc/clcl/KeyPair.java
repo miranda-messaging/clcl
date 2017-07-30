@@ -49,6 +49,7 @@ public class KeyPair {
     }
 
     public CertificateSigningRequest createCertificateSigningRequest () throws EncryptionException {
-        return getPublicKey().createCertificateSigningRequest(getPrivateKey());
+        // return getPublicKey().createCertificateSigningRequest(getPrivateKey());
+        return null;
     }
 }

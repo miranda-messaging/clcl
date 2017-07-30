@@ -163,6 +163,7 @@ public class TestPrivateKey extends TestCase {
             "HYwYAX2EzEovVp6jOkguJ00=\n" +
             "-----END CERTIFICATE-----\n";
 
+    /*
     @Test
     public void testSign () throws Exception {
         DistinguishedName dn = new DistinguishedName();
@@ -189,6 +190,7 @@ public class TestPrivateKey extends TestCase {
         Certificate temp = Certificate.fromPEM (TEST_CERTIFICATE_PEM);
         assert (temp.equals(certificate));
     }
+    */
 
     public static final String TEST_PASSWORD_PROTECTED_PEM =
             "-----BEGIN ENCRYPTED PRIVATE KEY-----\n" +

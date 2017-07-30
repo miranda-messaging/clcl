@@ -227,6 +227,7 @@ public class PrivateKey extends Key {
         return new BigInteger(bytes);
     }
 
+    /*
     public Certificate sign (CertificateSigningRequest certificateSigningRequest, Date notValidBefore,
                                  Date notValidAfter) throws EncryptionException
     {
@@ -259,6 +260,7 @@ public class PrivateKey extends Key {
             throw new EncryptionException("Exception trying to sign CSR", e);
         }
     }
+    */
 
     public static PrivateKey fromPEM (String pem) throws EncryptionException {
         try {
