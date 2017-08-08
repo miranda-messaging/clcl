@@ -227,7 +227,6 @@ public class PrivateKey extends Key {
         return new BigInteger(bytes);
     }
 
-    /*
     public Certificate sign (CertificateSigningRequest certificateSigningRequest, Date notValidBefore,
                                  Date notValidAfter) throws EncryptionException
     {
@@ -237,11 +236,12 @@ public class PrivateKey extends Key {
 
             AsymmetricKeyParameter asymmetricKeyParameter = PrivateKeyFactory.
                     createKey(getSecurityPrivateKey().getEncoded());
-            SubjectPublicKeyInfo keyInfo = SubjectPublicKeyInfo.getInstance(certificateSigningRequest.getPublicKey().
-                    getSecurityPublicKey().getEncoded());
+
+            SubjectPublicKeyInfo keyInfo = SubjectPublicKeyInfo.getInstance(certificateSigningRequest.getPkcs10().
+                    getSubjectPublicKeyInfo().getEncoded());
 
             X500Name issuer = new X500Name(getDn().toString());
-            X500Name subject = new X500Name(certificateSigningRequest.getPublicKey().getDn().toString());
+            X500Name subject = new X500Name(certificateSigningRequest.getSubjectDn().toString());
             BigInteger serialNumber = createSerialNumber();
             X509v3CertificateBuilder myCertificateGenerator = new X509v3CertificateBuilder(issuer, serialNumber,
                     notValidBefore, notValidAfter, subject, keyInfo);
@@ -260,7 +260,7 @@ public class PrivateKey extends Key {
             throw new EncryptionException("Exception trying to sign CSR", e);
         }
     }
-    */
+
 
     public static PrivateKey fromPEM (String pem) throws EncryptionException {
         try {

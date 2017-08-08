@@ -95,11 +95,9 @@ public class PublicKey extends Key {
         }
     }
 
-    /*
-    public CertificateSigningRequest createCertificateSigningRequest (PrivateKey privateKey) {
+    public CertificateSigningRequest createCertificateSigningRequest (PrivateKey privateKey) throws EncryptionException  {
         return new CertificateSigningRequest (this, privateKey);
     }
-    */
 
     @Override
     public String toPem(String password) throws EncryptionException {

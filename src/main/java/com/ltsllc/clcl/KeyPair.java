@@ -13,6 +13,11 @@ public class KeyPair {
     private PublicKey publicKey;
     private PrivateKey privateKey;
 
+    public KeyPair(PublicKey publicKey, PrivateKey privateKey) {
+        this.publicKey = publicKey;
+        this.privateKey = privateKey;
+    }
+
     public PrivateKey getPrivateKey() {
         return privateKey;
     }
@@ -49,7 +54,6 @@ public class KeyPair {
     }
 
     public CertificateSigningRequest createCertificateSigningRequest () throws EncryptionException {
-        // return getPublicKey().createCertificateSigningRequest(getPrivateKey());
-        return null;
+        return getPublicKey().createCertificateSigningRequest(getPrivateKey());
     }
 }
