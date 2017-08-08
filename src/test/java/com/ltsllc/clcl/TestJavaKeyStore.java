@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestJavaKeyStore extends EncryptionTestCase {
+    public static final String TEST_ALIAS = "private";
+    public static final String TEST_PASSWORD = "whatever";
+    public static final String TEST_FILENAME = "test";
+
     private JavaKeyStore javaKeyStore;
 
     public JavaKeyStore getJavaKeyStore() {
@@ -26,16 +30,13 @@ public class TestJavaKeyStore extends EncryptionTestCase {
     @Before
     public void setup () {
         this.javaKeyStore = new JavaKeyStore();
+        this.javaKeyStore.setFilename(TEST_FILENAME);
     }
 
     @After
     public void cleanup () {
         delete(TEST_FILENAME);
     }
-
-    public static final String TEST_ALIAS = "private";
-    public static final String TEST_PASSWORD = "whatever";
-    public static final String TEST_FILENAME = "test";
 
     @Test
     public void testAddPrivateKey () throws Exception {
@@ -92,9 +93,9 @@ public class TestJavaKeyStore extends EncryptionTestCase {
 
         getJavaKeyStore().add (TEST_ALIAS, keyPair.getPrivateKey(), chain);
         getJavaKeyStore().setPasswordString(TEST_PASSWORD);
-        getJavaKeyStore().store(TEST_FILENAME);
+        getJavaKeyStore().store();
 
-        getJavaKeyStore().load(TEST_FILENAME);
+        getJavaKeyStore().load();
         PrivateKey privateKey = getJavaKeyStore().getPrivateKey(TEST_ALIAS);
         assert (privateKey.equals(keyPair.getPrivateKey()));
     }
@@ -105,9 +106,9 @@ public class TestJavaKeyStore extends EncryptionTestCase {
         Certificate certificate = createCertificate();
         getJavaKeyStore().setPasswordString(TEST_PASSWORD);
         getJavaKeyStore().add(TEST_ALIAS, certificate);
-        getJavaKeyStore().store(TEST_FILENAME);
+        getJavaKeyStore().store();
 
-        getJavaKeyStore().load(TEST_FILENAME);
+        getJavaKeyStore().load();
 
         Certificate otherCertificate = getJavaKeyStore().getCertificate(TEST_ALIAS);
         assert (otherCertificate.equals(certificate));

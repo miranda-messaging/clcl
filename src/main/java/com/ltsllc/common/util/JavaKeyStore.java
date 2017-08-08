@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.util;
+package com.ltsllc.common.util;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;

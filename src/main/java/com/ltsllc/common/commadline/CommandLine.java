@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.commadline;
+package com.ltsllc.common.commadline;
 
 import java.util.Properties;
 

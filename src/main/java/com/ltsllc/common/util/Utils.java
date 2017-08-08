@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.util;
+package com.ltsllc.common.util;
 
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;

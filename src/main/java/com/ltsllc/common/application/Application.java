@@ -1,6 +1,6 @@
-package common.application;
+package com.ltsllc.common.application;
 
-import common.commadline.CommandLine;
+import com.ltsllc.common.commadline.CommandLine;
 
 /**
  * A command line application.

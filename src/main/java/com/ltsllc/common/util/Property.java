@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.util;
+package com.ltsllc.common.util;
 
 /**
  * Created by Clark on 3/4/2017.

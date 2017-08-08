@@ -1,6 +1,6 @@
-package common.test;
+package com.ltsllc.common.test;
 
-import common.util.Utils;
+import com.ltsllc.common.util.Utils;
 
 import java.io.*;
 
