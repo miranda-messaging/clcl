@@ -30,4 +30,12 @@ public class LDAPName {
 
         return stringBuilder.toString();
     }
+
+    public boolean equals (Object o) {
+        if (o == null || !(o instanceof LDAPName))
+            return false;
+
+        LDAPName other = (LDAPName) o;
+        return getKey().equals(other.getKey()) && getValue().equals(other.getValue());
+    }
 }
