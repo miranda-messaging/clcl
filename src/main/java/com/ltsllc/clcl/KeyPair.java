@@ -26,12 +26,13 @@ public class KeyPair {
         return publicKey;
     }
 
-    public void generateNewKeys () throws EncryptionException {
+    public static KeyPair newKeys () throws EncryptionException {
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
             java.security.KeyPair keyPair = keyPairGenerator.generateKeyPair();
-            this.publicKey = new PublicKey(keyPair.getPublic());
-            this.privateKey = new PrivateKey(keyPair.getPrivate());
+            PublicKey publicKey = new PublicKey(keyPair.getPublic());
+            PrivateKey privateKey = new PrivateKey(keyPair.getPrivate());
+            return new KeyPair(publicKey, privateKey);
         } catch (GeneralSecurityException e) {
             throw new EncryptionException("Exception trying to generate new keys", e);
         }

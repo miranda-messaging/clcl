@@ -23,7 +23,6 @@ public class EncryptionTestCase extends TestCase {
     }
 
     public CertificateSigningRequest getCsr() {
-
         return csr;
     }
 
