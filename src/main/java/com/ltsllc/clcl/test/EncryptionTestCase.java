@@ -9,10 +9,23 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class EncryptionTestCase extends TestCase {
+    private KeyPair keyPair;
     private PublicKey publicKey;
     private PrivateKey privateKey;
     private CertificateSigningRequest csr;
     private Certificate certificate;
+
+    public KeyPair getKeyPair() {
+        return keyPair;
+    }
+
+    public void setKeyPair(KeyPair keyPair) {
+        this.keyPair = keyPair;
+    }
+
+    public void creaateKeyPair () throws EncryptionException {
+        this.keyPair = KeyPair.newKeys();
+    }
 
     public Certificate getCertificate() {
         return certificate;
