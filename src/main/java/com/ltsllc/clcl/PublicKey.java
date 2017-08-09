@@ -16,14 +16,17 @@
 
 package com.ltsllc.clcl;
 
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.engines.DESedeEngine;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMEncryptor;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.openssl.*;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMEncryptorBuilder;
+import org.bouncycastle.operator.OutputEncryptor;
+import org.bouncycastle.pkcs.bc.BcPKCS12PBEOutputEncryptorBuilder;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
@@ -109,19 +112,26 @@ public class PublicKey extends Key {
 
     @Override
     public String toPem(String password) throws EncryptionException {
+        throw new IllegalArgumentException("not implemented");
+        /*
         try {
-            JcePEMEncryptorBuilder jcePEMEncryptorBuilder = new JcePEMEncryptorBuilder(SESSION_ALGORITHM);
-            jcePEMEncryptorBuilder.setProvider(new BouncyCastleProvider());
-            PEMEncryptor pemEncryptor = jcePEMEncryptorBuilder.build(password.toCharArray());
+            DESedeEngine desEdeEngine = new DESedeEngine();
+            CBCBlockCipher cbcBlockCipher = new CBCBlockCipher(desEdeEngine);
+            BcPKCS12PBEOutputEncryptorBuilder bcPKCS12PBEOutputEncryptorBuilder = new BcPKCS12PBEOutputEncryptorBuilder(PKCSObjectIdentifiers.pbeWithSHAAnd3_KeyTripleDES_CBC, cbcBlockCipher);
+            OutputEncryptor outputEncryptor = bcPKCS12PBEOutputEncryptorBuilder.build(password.toCharArray());
+            SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(getSecurityPublicKey().getEncoded());
+
+            PKCS8Generator pkcs8Generator = new PKCS8Generator(publicKeyInfo, outputEncryptor);
             StringWriter stringWriter = new StringWriter();
             PEMWriter pemWriter = new PEMWriter(stringWriter);
-            pemWriter.writeObject(getSecurityPublicKey(),pemEncryptor);
+            pemWriter.writeObject(pkcs8Generator);
             pemWriter.close();
 
             return stringWriter.toString();
         } catch (IOException e) {
             throw new EncryptionException("Exception creating PEM", e);
         }
+        */
     }
 
 

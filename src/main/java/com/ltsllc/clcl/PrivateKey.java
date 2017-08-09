@@ -28,6 +28,7 @@ import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.openssl.PKCS8Generator;
@@ -172,7 +173,6 @@ public class PrivateKey extends Key {
     @Override
     public String toPem(String password) throws EncryptionException {
         try {
-            JcaPKCS8EncryptedPrivateKeyInfoBuilder pkcs8EncryptedPrivateKeyInfoBuilder = new JcaPKCS8EncryptedPrivateKeyInfoBuilder(getSecurityPrivateKey());
             DESedeEngine desEdeEngine = new DESedeEngine();
             CBCBlockCipher cbcBlockCipher = new CBCBlockCipher(desEdeEngine);
             BcPKCS12PBEOutputEncryptorBuilder bcPKCS12PBEOutputEncryptorBuilder = new BcPKCS12PBEOutputEncryptorBuilder(PKCSObjectIdentifiers.pbeWithSHAAnd3_KeyTripleDES_CBC, cbcBlockCipher);
@@ -216,15 +216,19 @@ public class PrivateKey extends Key {
 
     public static final String SIGNATURE_ALGORITHM = "SHA1withRSA";
 
-    public BigInteger createSerialNumber () throws IOException {
-        byte[] bytes = UUID.randomUUID().toString().getBytes();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byteArrayOutputStream.write(bytes);
-        byteArrayOutputStream.close();
+    public BigInteger createSerialNumber () throws EncryptionException {
+        try {
+            byte[] bytes = UUID.randomUUID().toString().getBytes();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byteArrayOutputStream.write(bytes);
+            byteArrayOutputStream.close();
 
-        bytes = byteArrayOutputStream.toByteArray();
+            bytes = byteArrayOutputStream.toByteArray();
 
-        return new BigInteger(bytes);
+            return new BigInteger(bytes);
+        } catch (IOException e) {
+            throw new EncryptionException("Exception creating serial number", e);
+        }
     }
 
     public Certificate sign (CertificateSigningRequest certificateSigningRequest, Date notValidBefore,
@@ -266,11 +270,12 @@ public class PrivateKey extends Key {
         try {
             StringReader stringReader = new StringReader(pem);
             PEMParser parser = new PEMParser(stringReader);
-            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = (PKCS8EncodedKeySpec) parser.readObject();
-            KeyFactory kf = KeyFactory.getInstance("RSA");
-            java.security.PrivateKey jsPrivateKey = kf.generatePrivate(pkcs8EncodedKeySpec);
-            return new PrivateKey(jsPrivateKey);
-        } catch (GeneralSecurityException|IOException e) {
+            PEMKeyPair pemKeyPair = (PEMKeyPair) parser.readObject();
+            JcaPEMKeyConverter jcaPEMKeyConverter = new JcaPEMKeyConverter();
+            jcaPEMKeyConverter.setProvider(new BouncyCastleProvider());
+            java.security.PrivateKey privateKey = jcaPEMKeyConverter.getPrivateKey(pemKeyPair.getPrivateKeyInfo());
+            return new PrivateKey(privateKey);
+        } catch (IOException e) {
             throw new EncryptionException("Exception trying to convert PEM to private key", e);
         }
     }

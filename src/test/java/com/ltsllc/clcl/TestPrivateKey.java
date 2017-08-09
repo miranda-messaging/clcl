@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import javax.crypto.KeyGenerator;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -61,6 +62,7 @@ public class TestPrivateKey extends TestCase {
     }
 
     public static final String TEST_MESSAGE = "The Magic Words are Squeamish Ossifrage";
+    public static final String TEST_ALGORITHM = "AES";
 
     @Test
     public void testEncrypt () throws Exception {
@@ -72,12 +74,21 @@ public class TestPrivateKey extends TestCase {
     }
 
     @Test
+    public void testEncryptMessage () throws EncryptionException {
+        EncryptedMessage encryptedMessage = getPrivateKey().encrypt(TEST_ALGORITHM, TEST_MESSAGE.getBytes());
+        byte[] plainText = getPublicKey().decrypt(encryptedMessage);
+        String string = new String(plainText);
+        assert (string.equals(TEST_MESSAGE));
+    }
+
+    @Test
     public void testDecrypt () throws Exception {
         byte[] cipherText = getPublicKey().encrypt(TEST_MESSAGE.getBytes());
         byte[] plainText = getPrivateKey().decrypt(cipherText);
         String message = new String(plainText);
         assert (message.equals(TEST_MESSAGE));
     }
+
 
     @Test
     public void testDecryptMessage () throws Exception {
@@ -104,10 +115,12 @@ public class TestPrivateKey extends TestCase {
             "+ODaDUV4HZBif8uJAybJ4/SffofEqnjXlMjnyANUScVz\r\n" +
             "-----END RSA PRIVATE KEY-----\r\n";
 
+    // also tests fromPem
     @Test
     public void testToPem () throws EncryptionException {
         String pem = getPrivateKey().toPem();
-        assert (pem.equals(TEST_PEM));
+        PrivateKey privateKey = PrivateKey.fromPEM(pem);
+        assert (getPrivateKey().equals(privateKey));
     }
 
     public static final String TEST_PASSWORD = "whatever";
@@ -216,5 +229,14 @@ public class TestPrivateKey extends TestCase {
         String pem = getPrivateKey().toPem(TEST_PASSWORD);
         PrivateKey temp = PrivateKey.fromPEM(pem, TEST_PASSWORD);
         assert (temp.equals(getPrivateKey()));
+    }
+
+    @Test
+    public void testCreateSerialNumber () throws EncryptionException {
+        BigInteger bigInteger = getPrivateKey().createSerialNumber();
+        BigInteger different = getPrivateKey().createSerialNumber();
+
+        assert (bigInteger.equals(bigInteger));
+        assert (!(bigInteger.equals(different)));
     }
 }
