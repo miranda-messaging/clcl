@@ -27,6 +27,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMEncryptorBuilder;
 import org.bouncycastle.operator.OutputEncryptor;
 import org.bouncycastle.pkcs.bc.BcPKCS12PBEOutputEncryptorBuilder;
+import org.bouncycastle.util.io.pem.PemObject;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
@@ -110,31 +111,6 @@ public class PublicKey extends Key {
         }
     }
 
-    @Override
-    public String toPem(String password) throws EncryptionException {
-        throw new IllegalArgumentException("not implemented");
-        /*
-        try {
-            DESedeEngine desEdeEngine = new DESedeEngine();
-            CBCBlockCipher cbcBlockCipher = new CBCBlockCipher(desEdeEngine);
-            BcPKCS12PBEOutputEncryptorBuilder bcPKCS12PBEOutputEncryptorBuilder = new BcPKCS12PBEOutputEncryptorBuilder(PKCSObjectIdentifiers.pbeWithSHAAnd3_KeyTripleDES_CBC, cbcBlockCipher);
-            OutputEncryptor outputEncryptor = bcPKCS12PBEOutputEncryptorBuilder.build(password.toCharArray());
-            SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(getSecurityPublicKey().getEncoded());
-
-            PKCS8Generator pkcs8Generator = new PKCS8Generator(publicKeyInfo, outputEncryptor);
-            StringWriter stringWriter = new StringWriter();
-            PEMWriter pemWriter = new PEMWriter(stringWriter);
-            pemWriter.writeObject(pkcs8Generator);
-            pemWriter.close();
-
-            return stringWriter.toString();
-        } catch (IOException e) {
-            throw new EncryptionException("Exception creating PEM", e);
-        }
-        */
-    }
-
-
     public static PublicKey fromPEM(String pem) throws EncryptionException {
         try {
             StringReader stringReader = new StringReader(pem);
@@ -149,10 +125,6 @@ public class PublicKey extends Key {
         }
     }
 
-
-    public static PublicKey fromPEM(String pem, String passwordString) throws EncryptionException {
-        return null;
-    }
 
     public boolean equals (Object o) {
         if (o == null || !(o instanceof PublicKey))

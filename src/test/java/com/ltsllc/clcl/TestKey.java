@@ -56,11 +56,12 @@ public class TestKey extends EncryptionTestCase {
     }
 
     @Test
-    public void testToPemWithoutPassword () throws Exception {
+    public void testToPem () throws Exception {
         String pem = getPublicKey().toPem();
         PublicKey publicKey = PublicKey.fromPEM(pem);
         assert (publicKey.equals(getPublicKey()));
     }
+
 
     @Test
     public void testToPemWithPassword () throws Exception {
@@ -68,4 +69,5 @@ public class TestKey extends EncryptionTestCase {
         PublicKey publicKey = PublicKey.fromPEM(pem, TEST_PASSWORD);
         assert(getPublicKey().equals(publicKey));
     }
+
 }
