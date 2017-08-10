@@ -111,6 +111,7 @@ public class PublicKey extends Key {
         }
     }
 
+
     public static PublicKey fromPEM(String pem) throws EncryptionException {
         try {
             StringReader stringReader = new StringReader(pem);

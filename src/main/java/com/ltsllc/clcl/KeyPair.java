@@ -1,12 +1,17 @@
 package com.ltsllc.clcl;
 
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.crypto.engines.DESedeEngine;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMEncryptor;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.openssl.*;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMEncryptorBuilder;
+import org.bouncycastle.operator.OutputEncryptor;
+import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
+import org.bouncycastle.pkcs.bc.BcPKCS12PBEOutputEncryptorBuilder;
+import org.bouncycastle.util.io.pem.PemObject;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -17,6 +22,8 @@ import java.security.KeyPairGenerator;
 public class KeyPair {
     public static final String ALGORITHM = "RSA";
     public static final String SESSION_ALGORITHM = "AES";
+    public static final String OPEN_SSL_ALGORITHM = "DESede/CBC/PKCS5Padding";
+
 
     private PublicKey publicKey;
     private PrivateKey privateKey;
@@ -77,15 +84,15 @@ public class KeyPair {
             throw new EncryptionException("Exception trying to create PEM", e);
         }
     }
-
+/*
     public String toPem (String password) throws EncryptionException {
         try {
             StringWriter stringWriter = new StringWriter();
             PEMWriter pemWriter = new PEMWriter(stringWriter);
-            JcePEMEncryptorBuilder jcePEMEncryptorBuilder = new JcePEMEncryptorBuilder(SESSION_ALGORITHM);
-            jcePEMEncryptorBuilder.setProvider(new BouncyCastleProvider());
-            PEMEncryptor pemEncryptor = jcePEMEncryptorBuilder.build(password.toCharArray());
+
+            BcPKCS12PBEOutputEncryptorBuilder bcPKCS12PBEOutputEncryptorBuilder = new BcPKCS12PBEOutputEncryptorBuilder()
             java.security.KeyPair keyPair = new java.security.KeyPair(getPublicKey().getSecurityPublicKey(), getPrivateKey().getSecurityPrivateKey());
+            PKCS8Generator pkcs8Generator = new PKCS8Generator(getPrivateKey().getSecurityPrivateKey())
             pemWriter.writeObject(keyPair, pemEncryptor);
             pemWriter.close();
             return stringWriter.toString();
@@ -93,13 +100,36 @@ public class KeyPair {
             throw new EncryptionException("Exception trying to create PEM", e);
         }
     }
+*/
+
+    public String toPem (String password) throws EncryptionException {
+        try {
+            java.security.KeyPair keyPair = new java.security.KeyPair(getPublicKey().getSecurityPublicKey(), getPrivateKey().getSecurityPrivateKey());
+            DESedeEngine desEdeEngine = new DESedeEngine();
+            CBCBlockCipher cbcBlockCipher = new CBCBlockCipher(desEdeEngine);
+            BcPKCS12PBEOutputEncryptorBuilder bcPKCS12PBEOutputEncryptorBuilder = new BcPKCS12PBEOutputEncryptorBuilder(PKCSObjectIdentifiers.pbeWithSHAAnd3_KeyTripleDES_CBC, cbcBlockCipher);
+            OutputEncryptor outputEncryptor = bcPKCS12PBEOutputEncryptorBuilder.build(password.toCharArray());
+            StringWriter stringWriter = new StringWriter();
+            PEMWriter pemWriter = new PEMWriter(stringWriter);
+            pemWriter.writeObject(keyPair);
+            pemWriter.close();
+            return stringWriter.toString();
+        } catch (IOException e) {
+            throw new EncryptionException("Exception trying to convert private key to PEM", e);
+        }
+    }
 
     public static KeyPair fromPem (String pem, String password) throws EncryptionException {
         try {
             StringReader stringReader = new StringReader(pem);
             PEMParser pemParser = new PEMParser(stringReader);
-            Object o = pemParser.readObject();
-            return null;
+            PEMKeyPair pemKeyPair = (PEMKeyPair) pemParser.readObject();
+            JcaPEMKeyConverter jcaPEMKeyConverter = new JcaPEMKeyConverter();
+            jcaPEMKeyConverter.setProvider(new BouncyCastleProvider());
+            java.security.KeyPair keyPair = jcaPEMKeyConverter.getKeyPair(pemKeyPair);
+            PublicKey publicKey = new PublicKey(keyPair.getPublic());
+            PrivateKey privateKey = new PrivateKey(keyPair.getPrivate());
+            return new KeyPair(publicKey, privateKey);
         } catch (IOException e) {
             throw new EncryptionException("Exception reading PEM", e);
         }

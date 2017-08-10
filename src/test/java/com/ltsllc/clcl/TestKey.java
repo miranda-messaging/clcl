@@ -61,13 +61,4 @@ public class TestKey extends EncryptionTestCase {
         PublicKey publicKey = PublicKey.fromPEM(pem);
         assert (publicKey.equals(getPublicKey()));
     }
-
-
-    @Test
-    public void testToPemWithPassword () throws Exception {
-        String pem = getPublicKey().toPem(TEST_PASSWORD);
-        PublicKey publicKey = PublicKey.fromPEM(pem, TEST_PASSWORD);
-        assert(getPublicKey().equals(publicKey));
-    }
-
 }
