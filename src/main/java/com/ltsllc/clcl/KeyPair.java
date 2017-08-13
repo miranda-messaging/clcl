@@ -35,6 +35,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.GeneralSecurityException;
 import java.security.KeyPairGenerator;
+import java.util.Calendar;
+import java.util.Date;
 
 public class KeyPair {
     public static final String ALGORITHM = "RSA";
@@ -162,5 +164,18 @@ public class KeyPair {
 
         KeyPair other = (KeyPair) o;
         return getPublicKey().equals(other.getPublicKey()) && getPrivateKey().equals(other.getPrivateKey());
+    }
+
+    public Certificate createCertificate() throws EncryptionException {
+        CertificateSigningRequest csr = getPublicKey().createCertificateSigningRequest(getPrivateKey());
+
+        Date now = new Date();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.add(Calendar.YEAR, 10);
+        Date tenYearsFromNow = calendar.getTime();
+
+        return getPrivateKey().sign(csr, now, tenYearsFromNow);
     }
 }

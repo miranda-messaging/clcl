@@ -102,6 +102,7 @@ import java.util.UUID;
  */
 public class PrivateKey extends Key {
     public static final String ALGORITHM = "RSA";
+    public static final String SESSION_ALGORITHM = "AES";
 
     private java.security.PrivateKey securityPrivateKey;
 
@@ -111,6 +112,11 @@ public class PrivateKey extends Key {
 
     public PrivateKey(java.security.PrivateKey privateKey) {
         securityPrivateKey = privateKey;
+    }
+
+    @Override
+    public String getSessionAlgorithm() {
+        return SESSION_ALGORITHM;
     }
 
     /**

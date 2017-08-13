@@ -32,6 +32,8 @@ import org.bouncycastle.util.io.pem.PemObject;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -55,6 +57,12 @@ public class PublicKey extends Key {
         this.securityPublicKey = publicKey;
     }
 
+
+    @Override
+    public String getSessionAlgorithm() {
+        return SESSION_ALGORITHM;
+    }
+
     @Override
     public byte[] encrypt(byte[] plainText) throws EncryptionException {
         try {
@@ -69,9 +77,10 @@ public class PublicKey extends Key {
 
             return byteArrayOutputStream.toByteArray();
         } catch (GeneralSecurityException|IOException e) {
-            throw new EncryptionException("Exception trying to encrypt", e);
+            throw new EncryptionException("Exception trying to decrypt", e);
         }
     }
+
 
     @Override
     public byte[] decrypt(byte[] cipherText) throws EncryptionException {

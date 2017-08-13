@@ -38,6 +38,7 @@ import java.security.Security;
  * </p>
  */
 abstract public class Key implements Serializable {
+    abstract public String getSessionAlgorithm ();
     abstract public byte[] encrypt (byte[] plainText) throws EncryptionException;
     abstract public byte[] decrypt (byte[] cipherText) throws EncryptionException;
     abstract public String toPem () throws EncryptionException;
@@ -52,6 +53,14 @@ abstract public class Key implements Serializable {
 
     public void setDn(DistinguishedName dn) {
         this.dn = dn;
+    }
+
+    public EncryptedMessage encryptToMessage (byte[] plainText) throws EncryptionException {
+        return encrypt(getSessionAlgorithm(), plainText);
+    }
+
+    public byte[] decryptFromMessage (EncryptedMessage encryptedMessage) throws EncryptionException {
+        return decrypt(encryptedMessage);
     }
 
     /**

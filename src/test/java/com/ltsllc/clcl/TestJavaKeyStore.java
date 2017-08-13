@@ -55,8 +55,9 @@ public class TestJavaKeyStore extends EncryptionTestCase {
         delete(TEST_FILENAME);
     }
 
+    // also tests load, store, initialize and extract
     @Test
-    public void testAddPrivateKey () throws Exception {
+    public void testAddKeyPair () throws Exception {
         DistinguishedName dn = createDn();
 
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -66,6 +67,7 @@ public class TestJavaKeyStore extends EncryptionTestCase {
         publicKey.setDn(dn);
         PrivateKey privateKey = new PrivateKey(keyPair.getPrivate());
         privateKey.setDn(dn);
+        KeyPair keyPair2 = new KeyPair(publicKey, privateKey);
 
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -78,10 +80,16 @@ public class TestJavaKeyStore extends EncryptionTestCase {
 
         Certificate[] chain = { certificate };
 
-        getJavaKeyStore().add(TEST_ALIAS, privateKey, chain);
-        PrivateKey returnedValue = getJavaKeyStore().getPrivateKey(TEST_ALIAS);
+        getJavaKeyStore().add(TEST_ALIAS, keyPair2, chain);
 
-        assert (privateKey.equals(returnedValue));
+        getJavaKeyStore().setFilename(TEST_FILENAME);
+        getJavaKeyStore().setPasswordString(TEST_PASSWORD);
+        getJavaKeyStore().store();
+
+        getJavaKeyStore().load();
+
+        KeyPair returnedValue = getJavaKeyStore().getKeyPair(TEST_ALIAS);
+        assert (keyPair2.equals(returnedValue));
     }
 
     @Test
@@ -93,29 +101,6 @@ public class TestJavaKeyStore extends EncryptionTestCase {
         assert (certificate.equals(anotherCert));
     }
 
-    // This also tests load, store, toClclChain, initialize, extract, extractKeys and getPrivateKey
-    @Test
-    public void testAddPrivateKeys () throws Exception {
-        KeyPair keyPair = createKeyPair(2048);
-        CertificateSigningRequest csr = keyPair.createCertificateSigningRequest();
-
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.add(Calendar.YEAR, 1);
-        Date aYearFromNow = calendar.getTime();
-
-        Certificate certificate = keyPair.getPrivateKey().sign(csr, now, aYearFromNow);
-        Certificate[] chain = { certificate };
-
-        getJavaKeyStore().add (TEST_ALIAS, keyPair.getPrivateKey(), chain);
-        getJavaKeyStore().setPasswordString(TEST_PASSWORD);
-        getJavaKeyStore().store();
-
-        getJavaKeyStore().load();
-        PrivateKey privateKey = getJavaKeyStore().getPrivateKey(TEST_ALIAS);
-        assert (privateKey.equals(keyPair.getPrivateKey()));
-    }
 
     // This also tests load, store, initialize, extract, extractCertificates and getCertificate
     @Test
