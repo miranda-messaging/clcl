@@ -15,32 +15,17 @@
  *
  */
 
-package com.ltsllc.clcl;
+package com.ltsllc.clcl.password;
 
-import org.junit.Before;
-import org.junit.Test;
+import com.ltsllc.commons.util.ImprovedRandom;
 
-public class TestLDAPName {
-    private LDAPName ldapName;
-
-    public LDAPName getLdapName() {
-        return ldapName;
+public class Number extends Candidate {
+    public Number (ImprovedRandom improvedRandom) {
+        super(improvedRandom);
     }
 
-    public void setLdapName(LDAPName ldapName) {
-        this.ldapName = ldapName;
-    }
-
-    @Before
-    public void setup () {
-        this.ldapName = new LDAPName("cn=John Doe");
-    }
-
-
-    public void testEquals () {
-        LDAPName other = new LDAPName("cn=John Doe");
-        LDAPName different = new LDAPName("c=US");
-        assert (getLdapName().equals(other));
-        assert (!getLdapName().equals(different));
+    @Override
+    public String getCandidateString() {
+        return "1234567890";
     }
 }

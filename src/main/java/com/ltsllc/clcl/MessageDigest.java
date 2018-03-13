@@ -15,32 +15,28 @@
  *
  */
 
-package com.ltsllc.common.application;
+package com.ltsllc.clcl;
 
-import com.ltsllc.common.commadline.CommandLine;
+import com.ltsllc.commons.util.HexConverter;
+
+import java.security.GeneralSecurityException;
 
 /**
- * A command line application.
+ * A message digest, using a cryptographically strong one way hashing algorithm
  */
-abstract public class Application {
-    abstract public CommandLine createCommandLine (String[] argv);
+public class MessageDigest {
+    private java.security.MessageDigest jsMessageDigest;
 
-    private CommandLine commandLine;
-
-    public Application (String[] argv) {
-        CommandLine commandLine = createCommandLine(argv);
-        setCommandLine(commandLine);
+    public MessageDigest () throws GeneralSecurityException {
+        jsMessageDigest = java.security.MessageDigest.getInstance("SHA-256");;
     }
 
-    public CommandLine getCommandLine() {
-        return commandLine;
+    public void update (byte[] bytes) {
+        jsMessageDigest.update(bytes);
     }
 
-    public void setCommandLine(CommandLine commandLine) {
-        this.commandLine = commandLine;
-    }
-
-    public void go () {
-        getCommandLine().parse();
+    public String asHexString () {
+        byte[] digest = jsMessageDigest.digest();
+        return HexConverter.toHexString(digest);
     }
 }

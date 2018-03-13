@@ -17,10 +17,8 @@
 
 package com.ltsllc.clcl;
 
-import com.ltsllc.common.test.TestCase;
+public class Digest {
+    private byte[] raw;
 
-/**
- * An EncryptedMessage has only accessors --- there is nothing to test.
- */
-public class TestEncryptedMessage extends TestCase {
+
 }
