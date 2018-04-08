@@ -22,10 +22,16 @@ import com.ltsllc.commons.application.Option;
 import com.ltsllc.commons.commadline.CommandLine;
 import com.ltsllc.commons.util.Utils;
 
+import java.util.Map;
 import java.util.Scanner;
 
 public class PasswordPractise extends Option {
     @Override
+    public void execute(Map<String, Object> map) {
+
+    }
+
+
     public void execute(CommandLine commandLine) {
         try {
             String hexString = Utils.readTextFile("password.digest");

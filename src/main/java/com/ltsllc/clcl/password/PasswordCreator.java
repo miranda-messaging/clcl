@@ -24,8 +24,14 @@ import com.ltsllc.commons.util.Utils;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 
 public class PasswordCreator extends Option {
+    @Override
+    public void execute(Map<String, Object> map) {
+
+    }
+
     public void execute(CommandLine commandLine) {
         try {
             Generator generator = new Generator();

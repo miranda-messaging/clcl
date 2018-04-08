@@ -19,6 +19,8 @@ package com.ltsllc.clcl;
 
 import com.ltsllc.commons.util.HexConverter;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 
 /**
@@ -35,8 +37,30 @@ public class MessageDigest {
         jsMessageDigest.update(bytes);
     }
 
+    public void update (byte[] buffer, int offset, int length) {
+        jsMessageDigest.update(buffer, offset, length);
+    }
+
     public String asHexString () {
         byte[] digest = jsMessageDigest.digest();
         return HexConverter.toHexString(digest);
+    }
+
+    public static String calculate (byte[] array) throws GeneralSecurityException {
+        MessageDigest messageDigest = new MessageDigest();
+        messageDigest.update(array);
+        return messageDigest.asHexString();
+    }
+
+    public static String calculate (InputStream inputStream) throws GeneralSecurityException, IOException {
+        MessageDigest messageDigest = new MessageDigest();
+
+        byte[] buffer = new byte[8192];
+        int bytesRead = inputStream.read(buffer);
+        while (bytesRead != -1) {
+            messageDigest.update(buffer, 0, bytesRead);
+        }
+
+        return messageDigest.asHexString();
     }
 }

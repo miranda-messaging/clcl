@@ -17,6 +17,7 @@
 
 package com.ltsllc.clcl;
 
+import com.ltsllc.commons.util.Utils;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -60,44 +61,53 @@ import java.util.UUID;
  * A class to simplify working with private keys.
  *
  * <p>
- *     This class was created because of the state of interoperability between openSSL
- *     and Java public key.
+ * This class was created because of the state of interoperability between openSSL
+ * and Java public key.
  * </p>
  *
- *  <p>
- *      The class provides a number of "convenience method" for doing common tasks, specifically:
- *  </p>
+ * <p>
+ * The class provides a number of "convenience method" for doing common tasks, specifically:
+ * </p>
  *
- *  <ul>
- *      <li>{@link #encrypt(byte[])} for easy encryption</li>
- *      <li>{@link #decrypt(byte[])} for easy decryption</li>
- *      <li>{@link #encrypt(String, byte[])} for "fast" encryption of large amounts of data</li>
- *      <li>{@link #decrypt(EncryptedMessage)} for "fast" decryption of large amounts of data</li>
- *  </ul>
+ * <ul>
+ * <li>{@link #encrypt(byte[])} for easy encryption</li>
+ * <li>{@link #decrypt(byte[])} for easy decryption</li>
+ * <li>{@link #encrypt(String, byte[])} for "fast" encryption of large amounts of data</li>
+ * <li>{@link #decrypt(EncryptedMessage)} for "fast" decryption of large amounts of data</li>
+ * </ul>
  *
- *  <h3>Properties</h3>
- *  <table border="1">
- *      <tr>
- *          <th>Name</th>
- *          <th>Type</th>
- *          <th>Description</th>
- *      </tr>
+ * <h3>Properties</h3>
+ * <table border="1">
+ * <tr>
+ * <th>Name</th>
+ * <th>Type</th>
+ * <th>Description</th>
+ * </tr>
  *
- *      <tr>
- *          <td>securityPrivateKey</td>
- *          <td>java.security.PrivateKey</td>
- *          <td>
- *              The underlying private key that this instance "wraps."
- *              An instance should always have one of these.
- *          </td>
- *      </tr>
- *  </table>
+ * <tr>
+ * <td>securityPrivateKey</td>
+ * <td>java.security.PrivateKey</td>
+ * <td>
+ * The underlying private key that this instance "wraps."
+ * An instance should always have one of these.
+ * </td>
+ * </tr>
+ * </table>
  */
 public class PrivateKey extends Key {
     public static final String ALGORITHM = "RSA";
     public static final String SESSION_ALGORITHM = "AES";
 
     private java.security.PrivateKey securityPrivateKey;
+
+    public static void writePemFile(String filename, java.security.PrivateKey privateKey) throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        PEMWriter pemWriter = new PEMWriter(stringWriter);
+        pemWriter.writeObject(privateKey);
+        pemWriter.close();
+
+        Utils.writeTextFile(filename, stringWriter.toString());
+    }
 
     public java.security.PrivateKey getSecurityPrivateKey() {
         return securityPrivateKey;
@@ -116,8 +126,9 @@ public class PrivateKey extends Key {
      * Convenience method to encrypt some data.
      *
      * <p>
-     *     This method hides all the dirty work associated with encrypting some data with public key.
+     * This method hides all the dirty work associated with encrypting some data with public key.
      * </p>
+     *
      * @param plainText
      * @return
      * @throws EncryptionException
@@ -132,7 +143,7 @@ public class PrivateKey extends Key {
             cipherOutputStream.write(plainText);
             cipherOutputStream.close();
             return byteArrayOutputStream.toByteArray();
-        } catch (GeneralSecurityException|IOException e) {
+        } catch (GeneralSecurityException | IOException e) {
             throw new EncryptionException("Exception trying to encrypt", e);
         }
     }
@@ -147,7 +158,7 @@ public class PrivateKey extends Key {
             cipherOutputStream.write(cipherText);
             cipherOutputStream.close();
             return byteArrayOutputStream.toByteArray();
-        } catch (GeneralSecurityException|IOException e) {
+        } catch (GeneralSecurityException | IOException e) {
             throw new EncryptionException("Exception trying to decrypt", e);
         }
     }
@@ -216,7 +227,7 @@ public class PrivateKey extends Key {
 
     public static final String SIGNATURE_ALGORITHM = "SHA1withRSA";
 
-    public BigInteger createSerialNumber () throws EncryptionException {
+    public BigInteger createSerialNumber() throws EncryptionException {
         try {
             byte[] bytes = UUID.randomUUID().toString().getBytes();
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -231,9 +242,8 @@ public class PrivateKey extends Key {
         }
     }
 
-    public Certificate sign (CertificateSigningRequest certificateSigningRequest, Date notValidBefore,
-                                 Date notValidAfter) throws EncryptionException
-    {
+    public Certificate sign(CertificateSigningRequest certificateSigningRequest, Date notValidBefore,
+                            Date notValidAfter) throws EncryptionException {
         try {
             AlgorithmIdentifier sigAlgId = new DefaultSignatureAlgorithmIdentifierFinder().find(SIGNATURE_ALGORITHM);
             AlgorithmIdentifier digAlgId = new DefaultDigestAlgorithmIdentifierFinder().find(sigAlgId);
@@ -260,13 +270,13 @@ public class PrivateKey extends Key {
             InputStream inputStream = new ByteArrayInputStream(certificate.getEncoded());
             X509Certificate x509Certificate = (X509Certificate) certificateFactory.generateCertificate(inputStream);
             return new Certificate(x509Certificate);
-        } catch (IOException|OperatorException|CertificateException e) {
+        } catch (IOException | OperatorException | CertificateException e) {
             throw new EncryptionException("Exception trying to sign CSR", e);
         }
     }
 
 
-    public static PrivateKey fromPEM (String pem) throws EncryptionException {
+    public static PrivateKey fromPEM(String pem) throws EncryptionException {
         try {
             StringReader stringReader = new StringReader(pem);
             PEMParser parser = new PEMParser(stringReader);
@@ -280,7 +290,7 @@ public class PrivateKey extends Key {
         }
     }
 
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (o == null || !(o instanceof PrivateKey))
             return false;
 

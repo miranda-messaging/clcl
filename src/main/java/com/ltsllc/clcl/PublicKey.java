@@ -17,6 +17,7 @@
 
 package com.ltsllc.clcl;
 
+import com.ltsllc.commons.util.Utils;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
@@ -39,6 +40,7 @@ public class PublicKey extends Key {
     public static final String SESSION_ALGORITHM = "AES";
 
     private java.security.PublicKey securityPublicKey;
+
 
     public java.security.PublicKey getSecurityPublicKey() {
         return securityPublicKey;
@@ -67,7 +69,7 @@ public class PublicKey extends Key {
             cipherOutputStream.close();
 
             return byteArrayOutputStream.toByteArray();
-        } catch (GeneralSecurityException|IOException e) {
+        } catch (GeneralSecurityException | IOException e) {
             throw new EncryptionException("Exception trying to decrypt", e);
         }
     }
@@ -86,20 +88,20 @@ public class PublicKey extends Key {
             cipherOutputStream.close();
 
             return byteArrayOutputStream.toByteArray();
-        } catch (GeneralSecurityException|IOException e) {
+        } catch (GeneralSecurityException | IOException e) {
             throw new EncryptionException("Exception trying to decrypt", e);
         }
     }
 
-    public EncryptedMessage toEncryptedMessage (byte[] plainText) throws EncryptionException {
+    public EncryptedMessage toEncryptedMessage(byte[] plainText) throws EncryptionException {
         return encrypt(SESSION_ALGORITHM, plainText);
     }
 
-    public CertificateSigningRequest createCertificateSigningRequest (PrivateKey privateKey) throws EncryptionException  {
-        return new CertificateSigningRequest (this, privateKey);
+    public CertificateSigningRequest createCertificateSigningRequest(PrivateKey privateKey) throws EncryptionException {
+        return new CertificateSigningRequest(this, privateKey);
     }
 
-    public String toPem () throws EncryptionException {
+    public String toPem() throws EncryptionException {
         try {
             StringWriter stringWriter = new StringWriter();
             PEMWriter pemWriter = new PEMWriter(stringWriter);
@@ -127,12 +129,36 @@ public class PublicKey extends Key {
         }
     }
 
+    public static java.security.PublicKey readPublicKeyFromPEM(String pem) throws EncryptionException {
+        try {
+            StringReader stringReader = new StringReader(pem);
+            PEMParser pemParser = new PEMParser(stringReader);
+            SubjectPublicKeyInfo subjectPublicKeyInfo = (SubjectPublicKeyInfo) pemParser.readObject();
+            JcaPEMKeyConverter jcaPEMKeyConverter = new JcaPEMKeyConverter();
+            jcaPEMKeyConverter.setProvider(new BouncyCastleProvider());
+            return jcaPEMKeyConverter.getPublicKey(subjectPublicKeyInfo);
+        } catch (IOException e) {
+            throw new EncryptionException("Exception reading PEM", e);
+        }
+    }
 
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (o == null || !(o instanceof PublicKey))
             return false;
 
         PublicKey other = (PublicKey) o;
         return getSecurityPublicKey().equals(other.getSecurityPublicKey());
+    }
+
+    public static void writePemFile(String filename, java.security.PublicKey publicKey) throws EncryptionException {
+        try {
+            StringWriter stringWriter = new StringWriter();
+            PEMWriter pemWriter = new PEMWriter(stringWriter);
+            pemWriter.writeObject(publicKey);
+            pemWriter.close();
+
+        } catch (IOException e) {
+            throw new EncryptionException("Exception trying to covert public key to PEM", e);
+        }
     }
 }

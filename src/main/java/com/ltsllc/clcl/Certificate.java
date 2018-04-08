@@ -17,6 +17,7 @@
 
 package com.ltsllc.clcl;
 
+import com.ltsllc.commons.util.Utils;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PEMWriter;
@@ -47,6 +48,14 @@ public class Certificate {
         pemWriter.writeObject(getCertificate());
         pemWriter.close();
         return stringWriter.toString();
+    }
+
+    public static void writeAsPem (String filename, java.security.cert.Certificate certificate) throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        PEMWriter pemWriter = new PEMWriter(stringWriter);
+        pemWriter.writeObject(certificate);
+        pemWriter.close();
+        Utils.writeTextFile(filename, stringWriter.toString());
     }
 
     public static Certificate fromPEM (String pem) throws IOException, GeneralSecurityException {
