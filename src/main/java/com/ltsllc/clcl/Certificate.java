@@ -17,21 +17,16 @@
 
 package com.ltsllc.clcl;
 
-import com.sun.deploy.uitoolkit.impl.fx.ui.CertificateDialog;
-import jdk.internal.util.xml.impl.Input;
 import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.jcajce.provider.keystore.PKCS12;
-import org.bouncycastle.jcajce.provider.keystore.bc.BcKeyStoreSpi;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PEMWriter;
-import org.bouncycastle.operator.bc.BcContentVerifierProviderBuilder;
-import org.bouncycastle.operator.bc.BcRSAAsymmetricKeyUnwrapper;
-import org.bouncycastle.operator.bc.BcRSAContentVerifierProviderBuilder;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.math.BigInteger;
-import java.security.*;
-import java.security.cert.CertificateException;
+import java.security.GeneralSecurityException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
