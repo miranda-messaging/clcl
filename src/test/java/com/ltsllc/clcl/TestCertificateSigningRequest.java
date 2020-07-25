@@ -17,7 +17,7 @@
 
 package com.ltsllc.clcl;
 
-import com.ltsllc.common.test.TestCase;
+import com.ltsllc.commons.test.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import sun.security.pkcs10.PKCS10;

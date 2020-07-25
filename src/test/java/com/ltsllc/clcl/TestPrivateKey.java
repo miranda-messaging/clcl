@@ -17,8 +17,8 @@
 
 package com.ltsllc.clcl;
 
-import com.ltsllc.common.test.TestCase;
-import com.ltsllc.common.util.Utils;
+import com.ltsllc.commons.test.TestCase;
+import com.ltsllc.commons.util.Utils;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.junit.Before;
 import org.junit.Test;

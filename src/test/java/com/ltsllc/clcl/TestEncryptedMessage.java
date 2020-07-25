@@ -17,7 +17,7 @@
 
 package com.ltsllc.clcl;
 
-import com.ltsllc.common.test.TestCase;
+import com.ltsllc.commons.test.TestCase;
 
 /**
  * An EncryptedMessage has only accessors --- there is nothing to test.

@@ -29,12 +29,19 @@ public class TestKey extends EncryptionTestCase {
     public static final String TEST_ALGORITHM = "AES";
     public static final String TEST_MESSAGE = "TEST";
     public static final String TEST_PASSWORD = "whatever";
+    public static final String TEST_DISTINGUISHED_NAME
+            = "c=United States of America,st=Colorado,l=Denver,o=whatever,ou=Development,cn=whatever";
+
 
     @Before
-    public void setup () throws Exception {
-        KeyPair keyPair = KeyPair.newKeys();
-        setPublicKey(keyPair.getPublicKey());
-        setPrivateKey(keyPair.getPrivateKey());
+    public void setup () {
+        try {
+            KeyPair keyPair = KeyPair.newKeys();
+            setPublicKey(keyPair.getPublicKey());
+            setPrivateKey(keyPair.getPrivateKey());
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     public static boolean containsBouncyCastleProvider (Provider[] providers) {

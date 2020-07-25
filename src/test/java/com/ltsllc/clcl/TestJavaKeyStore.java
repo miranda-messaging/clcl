@@ -18,7 +18,7 @@
 package com.ltsllc.clcl;
 
 import com.ltsllc.clcl.test.EncryptionTestCase;
-import com.ltsllc.common.test.TestCase;
+import com.ltsllc.commons.test.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +37,9 @@ public class TestJavaKeyStore extends EncryptionTestCase {
     public static final String TEST_ALIAS = "private";
     public static final String TEST_PASSWORD = "whatever";
     public static final String TEST_FILENAME = "test";
+    public static final String TEST_DISTINGUISHED_NAME
+            = "c=United States of America,st=Colorado,l=Denver,o=whatever,ou=Development,cn=whatever";
+
 
     private JavaKeyStore javaKeyStore;
 
@@ -52,7 +55,7 @@ public class TestJavaKeyStore extends EncryptionTestCase {
 
     @After
     public void cleanup () {
-        delete(TEST_FILENAME);
+        deleteFile(TEST_FILENAME);
     }
 
     // also tests load, store, initialize and extract
