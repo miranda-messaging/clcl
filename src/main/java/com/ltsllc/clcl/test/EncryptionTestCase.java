@@ -18,7 +18,7 @@
 package com.ltsllc.clcl.test;
 
 import com.ltsllc.clcl.*;
-import com.ltsllc.commons.test.TestCase;
+import com.ltsllc.miranda.test.TestCase;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyPairGenerator;
