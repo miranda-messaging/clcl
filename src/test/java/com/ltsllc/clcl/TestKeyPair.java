@@ -17,44 +17,41 @@
 
 package com.ltsllc.clcl;
 
-import com.ltsllc.clcl.test.EncryptionTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.security.GeneralSecurityException;
-
-public class TestKeyPair extends EncryptionTestCase {
+public class TestKeyPair extends TestCase {
     public static final String TEST_PASSWORD = "whatever";
-    public static final String TEST_DISTINGUISHED_NAME
-            = "c=United States of America,st=Colorado,l=Denver,o=whatever,ou=Development,cn=whatever";
 
-
-    @Before
-    public void setup () {
-        try {
-            createKeyPair(1024);
-        } catch (GeneralSecurityException generalSecurityException) {
-            throw new RuntimeException(generalSecurityException);
-        }
+    private void createKeyPair() {
     }
 
-    @Test
+    private KeyPair getKeyPair() {
+        return null;
+    }
+
+    @Before
+    public void setup () throws EncryptionException {
+        createKeyPair();
+    }
+
+
     public void testNewKeys () {
         assert (null != getKeyPair());
     }
 
     // also tests fromPem
-    @Test
+
     public void testToPemNoPassword () throws EncryptionException{
         String pem = getKeyPair().toPem();
-        KeyPair keyPair = KeyPair.fromPem(pem, TEST_DISTINGUISHED_NAME);
+        KeyPair keyPair = KeyPair.fromPem(pem);
         assert (getKeyPair().equals(keyPair));
     }
 
-    @Test
+
     public void testToPemWithPassword () throws EncryptionException {
         String pem = getKeyPair().toPem(TEST_PASSWORD);
-        KeyPair keyPair = KeyPair.fromPem(pem, TEST_DISTINGUISHED_NAME);
+        KeyPair keyPair = KeyPair.fromPem(pem, TEST_PASSWORD);
         assert (getKeyPair().equals(keyPair));
     }
 }

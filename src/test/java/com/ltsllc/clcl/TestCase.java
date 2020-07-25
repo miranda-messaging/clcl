@@ -17,30 +17,18 @@
 
 package com.ltsllc.clcl;
 
-import org.junit.Before;
-import org.junit.Test;
-
-public class TestLDAPName {
-    private LDAPName ldapName;
-
-    public LDAPName getLdapName() {
-        return ldapName;
+/**
+ * A con
+ */
+public class TestCase {
+    public static Certificate createCertificate () {
+        return null;
     }
 
-    public void setLdapName(LDAPName ldapName) {
-        this.ldapName = ldapName;
+    public static void delete (String filename) {
     }
 
-    @Before
-    public void setup () {
-        this.ldapName = new LDAPName("cn=John Doe");
-    }
-
-
-    public void testEquals () {
-        LDAPName other = new LDAPName("cn=John Doe");
-        LDAPName different = new LDAPName("c=US");
-        assert (getLdapName().equals(other));
-        assert (!getLdapName().equals(different));
+    public DistinguishedName createDn () {
+        return null;
     }
 }

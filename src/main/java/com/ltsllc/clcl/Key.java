@@ -17,6 +17,7 @@
 
 package com.ltsllc.clcl;
 
+import com.ltsllc.commons.util.HexConverter;
 import com.ltsllc.commons.util.Utils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -92,8 +93,8 @@ abstract public class Key implements Serializable {
             cipherOutputStream.close();
 
             byte[] sessionKeyCipherText = encrypt(sessionKey.getEncoded());
-            String sessionKeyCipherTextString = Utils.bytesToString(sessionKeyCipherText);
-            String cipherTextString = Utils.bytesToString(byteArrayOutputStream.toByteArray());
+            String sessionKeyCipherTextString = HexConverter.toHexString(sessionKeyCipherText);
+            String cipherTextString = HexConverter.toHexString(byteArrayOutputStream.toByteArray());
 
             EncryptedMessage encryptedMessage = new EncryptedMessage(algorithm, sessionKeyCipherTextString, cipherTextString);
 
@@ -111,14 +112,14 @@ abstract public class Key implements Serializable {
      * </p>
      *
      * @param plainTextString The string to be encrypted.
-     * @return A hexadecimal string (suitable for use with {@link Utils#hexStringToBytes(String)}) that is the
+     * @return A hexadecimal string (suitable for use with {@link HexConverter#toByteArray(String)} that is the
      * input encrypted.
      * @throws EncryptionException If there is a problem encrypting.
      */
     public String encryptString (String plainTextString) throws EncryptionException {
         byte[] plainText = plainTextString.getBytes();
         byte[] cipherText = encrypt(plainText);
-        return Utils.bytesToString(cipherText);
+        return HexConverter.toHexString(cipherText);
     }
 
     /**
@@ -126,7 +127,7 @@ abstract public class Key implements Serializable {
      *
      * <p>
      *     This method assumes that the input is a hexadecimal string that represents the encrypted string.
-     *     This method calls {@link Utils#hexStringToBytes(String)} to convert the input to bytes before decrypting it.
+     *     This method calls {@link HexConverter#toByteArray(String)} to convert the input to bytes before decrypting it.
      * </p>
      *
      * @param hexString A hexadecimal string that represents the encrypted string.
@@ -136,7 +137,7 @@ abstract public class Key implements Serializable {
      * @return The decrypted string.
      */
     public String decryptString (String hexString) throws IOException, EncryptionException {
-        byte[] cipherText = Utils.hexStringToBytes(hexString);
+        byte[] cipherText = HexConverter.toByteArray(hexString);
         byte[] plainText = decrypt(cipherText);
         return new String(plainText);
     }
@@ -159,7 +160,7 @@ abstract public class Key implements Serializable {
         try {
             checkProviders();
 
-            byte[] sessionKeyPlainText = decrypt(Utils.hexStringToBytes(encryptedMessage.getKey()));
+            byte[] sessionKeyPlainText = decrypt(HexConverter.toByteArray(encryptedMessage.getKey()));
             SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(encryptedMessage.getAlgorithm());
 
             SecretKeySpec secretKeySpec = new SecretKeySpec(sessionKeyPlainText, encryptedMessage.getAlgorithm());
@@ -170,7 +171,7 @@ abstract public class Key implements Serializable {
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             CipherOutputStream cipherOutputStream = new CipherOutputStream(byteArrayOutputStream, cipher);
-            cipherOutputStream.write(Utils.hexStringToBytes(encryptedMessage.getMessage()));
+            cipherOutputStream.write(HexConverter.toByteArray(encryptedMessage.getMessage()));
             cipherOutputStream.close();
 
             return byteArrayOutputStream.toByteArray();

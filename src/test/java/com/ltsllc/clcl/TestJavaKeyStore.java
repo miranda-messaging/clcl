@@ -17,29 +17,18 @@
 
 package com.ltsllc.clcl;
 
-import com.ltsllc.clcl.test.EncryptionTestCase;
-import com.ltsllc.commons.test.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
 import java.security.KeyPairGenerator;
-import java.security.KeyStore;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-public class TestJavaKeyStore extends EncryptionTestCase {
+public class TestJavaKeyStore extends TestCase {
     public static final String TEST_ALIAS = "private";
     public static final String TEST_PASSWORD = "whatever";
     public static final String TEST_FILENAME = "test";
-    public static final String TEST_DISTINGUISHED_NAME
-            = "c=United States of America,st=Colorado,l=Denver,o=whatever,ou=Development,cn=whatever";
-
 
     private JavaKeyStore javaKeyStore;
 
@@ -55,11 +44,11 @@ public class TestJavaKeyStore extends EncryptionTestCase {
 
     @After
     public void cleanup () {
-        deleteFile(TEST_FILENAME);
+        delete(TEST_FILENAME);
     }
 
     // also tests load, store, initialize and extract
-    @Test
+
     public void testAddKeyPair () throws Exception {
         DistinguishedName dn = createDn();
 
@@ -95,7 +84,7 @@ public class TestJavaKeyStore extends EncryptionTestCase {
         assert (keyPair2.equals(returnedValue));
     }
 
-    @Test
+
     public void testAddCertificate () throws Exception {
         Certificate certificate = createCertificate();
         getJavaKeyStore().add(TEST_ALIAS, certificate);
@@ -106,7 +95,6 @@ public class TestJavaKeyStore extends EncryptionTestCase {
 
 
     // This also tests load, store, initialize, extract, extractCertificates and getCertificate
-    @Test
     public void testAddCertificates () throws Exception{
         Certificate certificate = createCertificate();
         getJavaKeyStore().setPasswordString(TEST_PASSWORD);

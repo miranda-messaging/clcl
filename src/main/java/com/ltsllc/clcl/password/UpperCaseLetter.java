@@ -15,12 +15,17 @@
  *
  */
 
-package com.ltsllc.clcl;
+package com.ltsllc.clcl.password;
 
-import com.ltsllc.commons.test.TestCase;
+import com.ltsllc.commons.util.ImprovedRandom;
 
-/**
- * An EncryptedMessage has only accessors --- there is nothing to test.
- */
-public class TestEncryptedMessage extends TestCase {
+public class UpperCaseLetter extends Candidate {
+    public UpperCaseLetter (ImprovedRandom improvedRandom) {
+        super(improvedRandom);
+    }
+
+    @Override
+    public String getCandidateString() {
+        return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    }
 }
