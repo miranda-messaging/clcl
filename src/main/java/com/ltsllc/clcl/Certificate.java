@@ -103,6 +103,6 @@ public class Certificate {
         javaKeyStore.store();
     }
 
-    public static String junk = "wrong";
-    
+    public static String junk = "wrong2";
+
 }
