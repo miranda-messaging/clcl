@@ -99,7 +99,7 @@ public class Certificate {
     public void store(String filename) throws IOException, EncryptionException {
         JavaKeyStore javaKeyStore = new JavaKeyStore();
 
-        javaKeyStore.add(null,this);
+        javaKeyStore.add (null,this);
         javaKeyStore.store();
     }
 
