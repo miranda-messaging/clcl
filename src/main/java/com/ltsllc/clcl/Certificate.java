@@ -96,6 +96,11 @@ public class Certificate {
         return new DistinguishedName(getCertificate().getIssuerDN());
     }
 
+    /*
+     *
+     * Store the certificate
+     *
+     */
     public void store(String filename) throws IOException, EncryptionException {
         JavaKeyStore javaKeyStore = new JavaKeyStore();
 
