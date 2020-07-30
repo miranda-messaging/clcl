@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class PasswordPractise extends Option {
-    @Override
+
     public void execute(Map<String, Object> map) {
 
     }
