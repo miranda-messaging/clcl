@@ -98,7 +98,6 @@ public class Certificate {
 
     /*
      * Store the certificate
-     * 
      */
     public void store(String filename) throws IOException, EncryptionException {
         JavaKeyStore javaKeyStore = new JavaKeyStore();
